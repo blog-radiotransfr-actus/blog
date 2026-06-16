@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Transfr - Administration Automatique</title>
+    <title>Transfr - Administration</title>
     <style>
         body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f9; text-align: center; }
         .box { background: white; padding: 20px; max-width: 500px; margin: 30px auto; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0,0,0,0.1); }
@@ -36,12 +36,11 @@
     </div>
 
     <div id="admin-zone" class="box hidden">
-        <h2>Créer un article en 1 clic</h2>
+        <h2>Créer un article</h2>
         
-        <input type="text" id="gh-user" placeholder="Ton pseudo GitHub" oninput="sauvegarderInfos()">
-        <input type="text" id="gh-repo" placeholder="Le nom de ton dépôt" oninput="sauvegarderInfos()">
-        <input type="password" id="gh-token" placeholder="Ton Token GitHub (Clé secrète)" oninput="sauvegarderInfos()">
-        <hr>
+        <input type="text" id="gh-user" class="hidden">
+        <input type="text" id="gh-repo" class="hidden">
+        <input type="password" id="gh-token" class="hidden">
 
         <input type="text" id="post-title" placeholder="Titre de l'article">
         <textarea id="post-content" rows="4" placeholder="Écris ton texte ici..."></textarea>
@@ -60,18 +59,11 @@
         let mediaBase64 = "";
         let mediaType = "";
 
-        // Charger les infos dès que la page s'ouvre
+        // Charge les infos cachées depuis la mémoire
         window.onload = function() {
             if(localStorage.getItem('gh-user')) document.getElementById('gh-user').value = localStorage.getItem('gh-user');
             if(localStorage.getItem('gh-repo')) document.getElementById('gh-repo').value = localStorage.getItem('gh-repo');
             if(localStorage.getItem('gh-token')) document.getElementById('gh-token').value = localStorage.getItem('gh-token');
-        }
-
-        // Sauvegarder les infos pendant que tu tapes
-        function sauvegarderInfos() {
-            localStorage.setItem('gh-user', document.getElementById('gh-user').value);
-            localStorage.setItem('gh-repo', document.getElementById('gh-repo').value);
-            localStorage.setItem('gh-token', document.getElementById('gh-token').value);
         }
 
         function verifierPIN() {
@@ -121,7 +113,7 @@
             const status = document.getElementById('status-msg');
 
             if (!user || !repo || !token || !titre || !contenu) {
-                alert("Remplis tous les champs !");
+                alert("Erreur : Les informations de configuration (Pseudo, Dépôt ou Token) sont introuvables. Recharge l'ancienne page pour les saisir.");
                 return;
             }
 
@@ -149,7 +141,7 @@
                 const url = `https://api.github.com/repos/${user}/${repo}/contents/index.html`;
                 const reponseGet = await fetch(url, { headers: { "Authorization": `token ${token}` } });
                 
-                if (!reponseGet.ok) throw new Error("Impossible de trouver index.html. Vérifie tes infos.");
+                if (!reponseGet.ok) throw new Error("Impossible de se connecter. Vérifie tes infos.");
                 
                 const donneesFile = await reponseGet.json();
                 let ancienTexteHtml = decodeURIComponent(escape(atob(donneesFile.content)));
