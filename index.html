@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>Transfr - Le Blog Officiel de la Radio</title>
+    <title>Transfr Blog - Le site officiel</title>
     
-    <meta name="description" content="Découvre Transfr ! Retrouve tous mes articles, mes vidéos, mes actus gaming et mes sélections de musiques gratuites en un seul endroit.">
+    <meta name="description" content="Découvre Transfr Blog ! Retrouve tous mes articles, mes vidéos, mes actus gaming et mes blagues en un seul endroit.">
     
     <style>
         body {
@@ -34,21 +34,39 @@
             opacity: 0.9;
         }
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 30px auto;
             padding: 0 20px;
         }
-        /* Style des articles qui s'ajouteront tout seuls */
+        /* Style de l'article de bienvenue fixe */
+        .welcome-post {
+            background: #ffffff;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border-left: 5px solid #007ecc;
+        }
+        .welcome-post h2 {
+            margin-top: 0;
+            color: #005999;
+        }
+        /* Style des articles avec texte à gauche et vidéo à droite */
         .post {
             background: white;
             padding: 25px;
             margin-bottom: 25px;
             border-radius: 12px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            transition: transform 0.2s;
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap; /* S'adapte si l'écran est petit */
         }
-        .post:hover {
-            transform: translateY(-2px);
+        .post-content {
+            flex: 1;
+            min-width: 250px;
         }
         .post h2 {
             margin-top: 0;
@@ -59,11 +77,15 @@
             color: #555;
             white-space: pre-wrap;
         }
-        .post img, .post video {
-            max-width: 100%;
+        /* Zone pour la vidéo sur le côté droit */
+        .post-media {
+            flex: 1;
+            min-width: 250px;
+            max-width: 400px;
+        }
+        .post-media video, .post-media iframe {
+            width: 100%;
             border-radius: 8px;
-            margin-top: 15px;
-            display: block;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         footer {
@@ -77,32 +99,21 @@
 </head>
 <body>
 
-<div class="post" style="background: white; padding: 20px; margin: 20px 0; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: left;">
-    <h2 style="color: #333; margin-top:0;">Blague a TOTO : Pour une fois TOTO obéit !</h2>
-    <p style="color: #555; line-height: 1.6; white-space: pre-wrap;">Toto va chez le médecin parce qu'il est un peu malade. Le docteur l'examine et lui donne une boîte de médicaments en lui disant :
-– Voilà Toto, c'est très simple : tu prends trois comprimés, et tu sautes une journée. Puis, tu reprends trois comprimés et ça ira beaucoup mieux !
-
-Le lendemain, la maman de Toto entre dans sa chambre et le voit en train de sauter partout sur son lit, épuisé et tout transpirant.
-– Mais enfin Toto, qu'est-ce que tu fais ?!
-– Bah j'obéis au docteur ! J'ai pris mes trois comprimés, et maintenant je dois sauter toute la journée !</p>
-    
-</div>
-
-
     <header>
-        <h1>Transfr</h1>
+        <h1>Transfr Blog</h1>
         <p>Bienvenue sur mon site officiel !</p>
     </header>
 
     <div class="container">
-        <div class="post">
-            <h2>Bienvenue sur Transfr !</h2>
+        <div class="welcome-post">
+            <h2>Bienvenue sur Transfr Blog !</h2>
             <p>C'est ici que je vais poster toutes les nouveautés, mes articles et mes vidéos. Reste branché !</p>
         </div>
-    </div>
+
+        </div>
 
     <footer>
-        <p>© 2026 Transfr - Tous droits réservés</p>
+        <p>© 2026 Transfr Blog - Tous droits réservés</p>
     </footer>
 
 </body>
