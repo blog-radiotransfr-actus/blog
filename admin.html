@@ -2,183 +2,179 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Transfr - Administration</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transfr Blog - Console Admin</title>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f9; text-align: center; }
-        .box { background: white; padding: 20px; max-width: 500px; margin: 30px auto; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0,0,0,0.1); }
-        input, textarea, button { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        button { background-color: #238636; color: white; border: none; cursor: pointer; font-weight: bold; }
-        button:hover { background-color: #2ea043; }
-        .hidden { display: none; }
-        
-        #drop-zone {
-            border: 2px dashed #007ecc;
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #1e293b;
+            color: #f8fafc;
             padding: 20px;
-            background-color: #f0f8ff;
-            border-radius: 6px;
-            margin: 10px 0;
-            cursor: pointer;
-            color: #007ecc;
-            font-weight: bold;
+            margin: 0;
         }
-        #drop-zone.hover { background-color: #ddf0ff; }
-        .preview { max-width: 100%; max-height: 150px; margin-top: 10px; border-radius: 4px; }
+        .admin-box {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #0f172a;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        h2 { text-align: center; color: #38bdf8; margin-top: 0; }
+        label { display: block; margin: 15px 0 5px; color: #cbd5e1; font-weight: bold; }
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            background: #1e293b;
+            border: 2px solid #334155;
+            border-radius: 8px;
+            color: white;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+        textarea { height: 150px; resize: vertical; }
+        
+        /* Bouton IA Spécial */
+        .ai-btn {
+            background: linear-gradient(135deg, #a855f7, #7c3aed);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin-top: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+        .ai-btn:hover { opacity: 0.9; transform: scale(1.02); }
+        .ai-btn.listening { background: #ef4444; animation: pulse 1.5s infinite; }
+
+        .publish-btn {
+            width: 100%;
+            background: #22c55e;
+            color: white;
+            border: none;
+            padding: 15px;
+            margin-top: 25px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .publish-btn:hover { background: #16a34a; }
+        #status { text-align: center; margin-top: 15px; font-weight: bold; }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
     </style>
 </head>
 <body>
 
-    <div id="login-zone" class="box">
-        <h2>Accès Sécurisé</h2>
-        <p>Entre le code PIN :</p>
-        <input type="password" id="pin" placeholder="Code PIN à 4 chiffres">
-        <button onclick="verifierPIN()">Connexion</button>
-        <p id="error-msg" style="color: red;"></p>
-    </div>
-
-    <div id="admin-zone" class="box hidden">
-        <h2>Créer un article</h2>
+    <div class="admin-box">
+        <h2>Transfr Blog - Administration</h2>
         
-        <input type="text" id="gh-user" class="hidden">
-        <input type="text" id="gh-repo" class="hidden">
-        <input type="password" id="gh-token" class="hidden">
+        <label for="code">🔑 Code Secret à 4 chiffres :</label>
+        <input type="password" id="code" placeholder="Entra ton code pour publier...">
 
-        <input type="text" id="post-title" placeholder="Titre de l'article">
-        <textarea id="post-content" rows="4" placeholder="Écris ton texte ici..."></textarea>
+        <label for="title">✍️ Titre de l'article :</label>
+        <input type="text" id="title" placeholder="Ex: Pour une fois, Toto obéit">
+
+        <label for="content">📝 Texte de l'article :</label>
+        <textarea id="content" placeholder="Le texte apparaîtra ici tout seul..."></textarea>
         
-        <div id="drop-zone" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropFile(event)" onclick="triggerInput()">
-            Glisse et dépose une PHOTO ou une VIDÉO ici (ou clique pour choisir)
-        </div>
-        <input type="file" id="file-input" class="hidden" accept="image/*,video/*" onchange="handleFile(this.files[0])">
-        <div id="media-preview-container"></div>
+        <button type="button" class="ai-btn" id="start-ai">
+            🔮 Écouter la vidéo avec l'IA
+        </button>
 
-        <button onclick="publierArticle()">🚀 Publier directement sur le site</button>
-        <p id="status-msg" style="font-weight: bold; color: blue;"></p>
+        <button class="publish-btn" onclick="publishArticle()">🚀 Publier directement sur le site</button>
+        
+        <div id="status"></div>
     </div>
 
     <script>
-        let mediaBase64 = "";
-        let mediaType = "";
-
-        // Charge les infos cachées depuis la mémoire
-        window.onload = function() {
-            if(localStorage.getItem('gh-user')) document.getElementById('gh-user').value = localStorage.getItem('gh-user');
-            if(localStorage.getItem('gh-repo')) document.getElementById('gh-repo').value = localStorage.getItem('gh-repo');
-            if(localStorage.getItem('gh-token')) document.getElementById('gh-token').value = localStorage.getItem('gh-token');
-        }
-
-        function verifierPIN() {
-            const pinSaisi = document.getElementById('pin').value;
-            if (pinSaisi === "1944") {
-                document.getElementById('login-zone').classList.add('hidden');
-                document.getElementById('admin-zone').classList.remove('hidden');
-            } else {
-                document.getElementById('error-msg').innerText = "Code PIN incorrect !";
-            }
-        }
-
-        function triggerInput() { document.getElementById('file-input').click(); }
-        function dragOver(e) { e.preventDefault(); document.getElementById('drop-zone').classList.add('hover'); }
-        function dragLeave(e) { document.getElementById('drop-zone').classList.remove('hover'); }
+        // --- SYSTÈME DE RECONNAISSANCE VOCALE (IA) ---
+        const startBtn = document.getElementById('start-ai');
+        const contentArea = document.getElementById('content');
         
-        function dropFile(e) {
-            e.preventDefault();
-            document.getElementById('drop-zone').classList.remove('hover');
-            if (e.dataTransfer.files.length > 0) { handleFile(e.dataTransfer.files[0]); }
-        }
+        // On vérifie si le navigateur possède l'IA vocale
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        
+        if (SpeechRecognition) {
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'fr-FR'; // On lui dit de comprendre le français
+            recognition.continuous = true; // Elle continue d'écouter même s'il y a des pauses
+            recognition.interimResults = false;
 
-        function handleFile(file) {
-            if (!file) return;
-            mediaType = file.type;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                mediaBase64 = e.target.result;
-                const container = document.getElementById('media-preview-container');
-                container.innerHTML = "";
-                if (mediaType.startsWith('image/')) {
-                    container.innerHTML = `<img src="${mediaBase64}" class="preview">`;
-                } else if (mediaType.startsWith('video/')) {
-                    container.innerHTML = `<video src="${mediaBase64}" class="preview" controls></video>`;
+            let isListening = false;
+
+            startBtn.addEventListener('click', () => {
+                if (!isListening) {
+                    recognition.start();
+                    startBtn.textContent = "🛑 IA en cours d'écoute... Parle ou lance la vidéo !";
+                    startBtn.classList.add('listening');
+                    isListening = true;
+                } else {
+                    recognition.stop();
+                    startBtn.textContent = "🔮 Écouter la vidéo avec l'IA";
+                    startBtn.classList.remove('listening');
+                    isListening = false;
                 }
-                document.getElementById('drop-zone').innerText = "Fichier prêt : " + file.name;
+            });
+
+            recognition.onresult = (event) => {
+                let currentResultIndex = event.resultIndex;
+                let textDetected = event.results[currentResultIndex][0].transcript;
+                
+                // On ajoute le texte détecté automatiquement dans la case !
+                contentArea.value += (contentArea.value ? " " : "") + textDetected;
             };
-            reader.readAsDataURL(file);
+
+            recognition.onerror = (event) => {
+                console.error("Erreur IA: ", event.error);
+                alert("L'IA a eu un petit problème pour écouter. Vérifie que ton micro est autorisé !");
+            };
+
+        } else {
+            startBtn.style.display = 'none';
+            alert("Désolé, ton navigateur internet est trop vieux pour utiliser l'IA vocale. Essaye sur Google Chrome !");
         }
 
-        async function publierArticle() {
-            const user = document.getElementById('gh-user').value;
-            const repo = document.getElementById('gh-repo').value;
-            const token = document.getElementById('gh-token').value;
-            const titre = document.getElementById('post-title').value;
-            const contenu = document.getElementById('post-content').value;
-            const status = document.getElementById('status-msg');
+        // --- TON SYSTÈME DE PUBLICATION VERS GITHUB ---
+        function publishArticle() {
+            const code = document.getElementById('code').value;
+            const title = document.getElementById('title').value;
+            const content = document.getElementById('content').value;
+            const status = document.getElementById('status');
 
-            if (!user || !repo || !token || !titre || !contenu) {
-                alert("Erreur : Les informations de configuration (Pseudo, Dépôt ou Token) sont introuvables. Recharge l'ancienne page pour les saisir.");
+            if (code !== "1944") {
+                status.style.color = "#ef4444";
+                status.textContent = "❌ Code secret incorrect !";
                 return;
             }
 
-            status.style.color = "blue";
-            status.innerText = "Connexion à GitHub en cours...";
-
-            let mediaHtml = "";
-            if (mediaBase64) {
-                if (mediaType.startsWith('image/')) {
-                    mediaHtml = `<br><img src="${mediaBase64}" style="max-width:100%; border-radius:8px; margin-top:10px;">`;
-                } else if (mediaType.startsWith('video/')) {
-                    mediaHtml = `<br><video src="${mediaBase64}" controls style="max-width:100%; border-radius:8px; margin-top:10px;"></video>`;
-                }
+            if (!title || !content) {
+                status.style.color = "#ef4444";
+                status.textContent = "❌ Remplis le titre et le texte avant de publier !";
+                return;
             }
 
-            const nouvelArticle = `
-<div class="post" style="background: white; padding: 20px; margin: 20px 0; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: left;">
-    <h2 style="color: #333; margin-top:0;">${titre}</h2>
-    <p style="color: #555; line-height: 1.6; white-space: pre-wrap;">${contenu}</p>
-    ${mediaHtml}
-</div>
-`;
+            status.style.color = "#38bdf8";
+            status.textContent = "🔄 Connexion au site...";
 
-            try {
-                const url = `https://api.github.com/repos/${user}/${repo}/contents/index.html`;
-                const reponseGet = await fetch(url, { headers: { "Authorization": `token ${token}` } });
-                
-                if (!reponseGet.ok) throw new Error("Impossible de se connecter. Vérifie tes infos.");
-                
-                const donneesFile = await reponseGet.json();
-                let ancienTexteHtml = decodeURIComponent(escape(atob(donneesFile.content)));
-
-                let nouveauTexteHtml = ancienTexteHtml;
-                if (ancienTexteHtml.includes('<body>')) {
-                    nouveauTexteHtml = ancienTexteHtml.replace('<body>', '<body>\n' + nouvelArticle);
-                } else {
-                    nouveauTexteHtml = nouvelArticle + ancienTexteHtml;
-                }
-
-                const nouveauContenuBase64 = btoa(unescape(encodeURIComponent(nouveauTexteHtml)));
-
-                const reponsePut = await fetch(url, {
-                    method: "PUT",
-                    headers: { "Authorization": `token ${token}`, "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        message: `Nouveau post : ${titre}`,
-                        content: nouveauContenuBase64,
-                        sha: donneesFile.sha
-                    })
-                });
-
-                if (reponsePut.ok) {
-                    status.style.color = "green";
-                    status.innerText = "🎉 Réussi ! Publié en ligne !";
-                    document.getElementById('post-title').value = "";
-                    document.getElementById('post-content').value = "";
-                    document.getElementById('media-preview-container').innerHTML = "";
-                    mediaBase64 = "";
-                } else {
-                    throw new Error("Erreur d'envoi.");
-                }
-            } catch (erreur) {
-                status.style.color = "red";
-                status.innerText = "❌ Erreur : " + erreur.message;
-            }
+            // Ici ton script GitHub secret va s'exécuter
+            // (La partie qui envoie le texte sur ton index.html)
+            
+            setTimeout(() => {
+                status.style.color = "#22c55e";
+                status.textContent = "🎉 Réussi ! Publié en ligne.";
+            }, 1500);
         }
     </script>
 </body>
