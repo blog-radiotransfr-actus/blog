@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Transfr - Administration</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f9; text-align: center; }
+        .box { background: white; padding: 20px; max-width: 500px; margin: 50px auto; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0,0,0,0.1); }
+        input, textarea, button { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { background-color: #238636; color: white; border: none; cursor: pointer; font-weight: bold; }
+        button:hover { background-color: #2ea043; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="login-zone" class="box">
+        <h2>Accès Sécurisé</h2>
+        <p>Entre le code PIN pour gérer le blog :</p>
+        <input type="password" id="pin" placeholder="Code PIN à 4 chiffres">
+        <button onclick="verifierPIN()">Connexion</button>
+        <p id="error-msg" style="color: red;"></p>
+    </div>
+
+    <div id="admin-zone" class="box hidden">
+        <h2>Créer un nouvel article</h2>
+        <input type="text" id="post-title" placeholder="Titre de l'article">
+        <textarea id="post-content" rows="6" placeholder="Écris ton texte ici (tu peux aussi mettre des liens de photos ou vidéos)..."></textarea>
+        <button onclick="genererCodeHTML()">Générer le code de l'article</button>
+
+        <hr>
+        <h3>Étape finale :</h3>
+        <p>Copie le code généré ci-dessous et colle-le dans ton fichier <code>index.html</code> sur GitHub :</p>
+        <textarea id="result-code" rows="6" readonly placeholder="Le code à copier apparaîtra ici..." onclick="this.select()"></textarea>
+    </div>
+
+    <script>
+        // Vérification du code PIN
+        function verifierPIN() {
+            const pinSaisi = document.getElementById('pin').value;
+            if (pinSaisi === "1944") {
+                document.getElementById('login-zone').classList.add('hidden');
+                document.getElementById('admin-zone').classList.remove('hidden');
+            } else {
+                document.getElementById('error-msg').innerText = "Code PIN incorrect !";
+            }
+        }
+
+        // Générateur de code HTML pour le blog
+        function genererCodeHTML() {
+            const titre = document.getElementById('post-title').value;
+            const contenu = document.getElementById('post-content').value;
+            
+            if(!titre || !contenu) {
+                alert("Remplis le titre et le contenu !");
+                return;
+            }
+
+            // Crée le bloc HTML propre pour ton index.html
+            const codeGenere = `
+<div class="post" style="background: white; padding: 20px; margin: 20px 0; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+    <h2 style="color: #333;">${titre}</h2>
+    <p style="color: #555; line-height: 1.6; white-space: pre-wrap;">${contenu}</p>
+</div>
+`;
+
+            document.getElementById('result-code').value = codeGenere;
+        }
+    </script>
+</body>
+</html>
