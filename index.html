@@ -3,41 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mon Blog Transfr</title>
-    <link rel="stylesheet" href="style.css">
+    
+    <title>Transfr - Le Blog Officiel de la Radio</title>
+    
+    <meta name="description" content="Découvre Transfr ! Retrouve tous mes articles, mes vidéos, mes actus gaming et mes sélections de musiques gratuites en un seul endroit.">
+    
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #eef2f5;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        header {
+            background: linear-gradient(135deg, #007ecc, #005999);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            letter-spacing: 1px;
+        }
+        header p {
+            margin: 10px 0 0 0;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        /* Style des articles qui s'ajouteront tout seuls */
+        .post {
+            background: white;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+        .post:hover {
+            transform: translateY(-2px);
+        }
+        .post h2 {
+            margin-top: 0;
+            color: #007ecc;
+        }
+        .post p {
+            line-height: 1.6;
+            color: #555;
+            white-space: pre-wrap;
+        }
+        .post img, .post video {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: block;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+            font-size: 0.9rem;
+            margin-top: 50px;
+        }
+    </style>
 </head>
 <body>
 
     <header>
-        <h1>Bienvenue sur mon Blog</h1>
-        <p>Découvre mes passions, mes projets et mes partages !</p>
+        <h1>Transfr</h1>
+        <p>Bienvenue sur mon site officiel !</p>
     </header>
 
-    <main class="container">
-        
-        <article class="post">
-            <h2 class="post-title">Mon premier article !</h2>
-            <p class="post-date">Publié le 16 juin 2026</p>
-            <p class="post-content">
-                Bienvenue sur mon tout nouveau blog hébergé grâce à GitHub Pages. 
-                Ici, je vais parler de ce que j'aime, de mes projets de code, et de plein d'autres choses passionnantes. 
-                Restez à l'écoute pour les prochains articles !
-            </p>
-        </article>
-
-        <article class="post">
-            <h2 class="post-title">Ma passion pour la radio et la musique</h2>
-            <p class="post-date">Publié le 15 juin 2026</p>
-            <p class="post-content">
-                Dans ce deuxième article, je voulais vous partager mon intérêt pour la création de contenus audio. 
-                C'est super cool de pouvoir mixer de la musique libre de droit et de créer une vraie ambiance pour les auditeurs.
-            </p>
-        </article>
-
-    </main>
+    <div class="container">
+        <div class="post">
+            <h2>Bienvenue sur Transfr !</h2>
+            <p>C'est ici que je vais poster toutes les nouveautés, mes articles et mes vidéos. Reste branché !</p>
+        </div>
+    </div>
 
     <footer>
-        <p>&copy; 2026 - Créé avec passion et hébergé sur GitHub</p>
+        <p>© 2026 Transfr - Tous droits réservés</p>
     </footer>
 
 </body>
